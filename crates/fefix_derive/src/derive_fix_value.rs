@@ -43,7 +43,7 @@ pub fn derive_fix_value(input: TokenStream) -> TokenStream {
     };
     let gen = quote! {
         impl<'a> FieldType<'a> for #identifier {
-            type Error = ();
+            type Error = String;
             type SerializeSettings = ();
 
             fn serialize_with<B>(&self, buffer: &mut B, _settings: Self::SerializeSettings) -> usize
@@ -58,7 +58,7 @@ pub fn derive_fix_value(input: TokenStream) -> TokenStream {
             fn deserialize(data: &'a [u8]) -> ::std::result::Result<Self, <Self as FieldType<'a>>::Error> {
                 match data {
                     #(#deserialize_matching_cases),*,
-                    _ => ::std::result::Result::Err(())
+                    _ => ::std::result::Result::Err("invalid-data".into())
                 }
             }
         }
